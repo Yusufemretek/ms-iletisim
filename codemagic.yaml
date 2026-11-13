@@ -1,0 +1,49 @@
+# MS İletişim — Mac olmadan iOS build (Codemagic bulut macOS makineleri)
+# Rehber: IOS_BUILD.md
+workflows:
+  ios-release:
+    name: iOS App Store (TestFlight)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      # Codemagic > Team settings > Integrations > App Store Connect'te verdiğiniz isim
+      app_store_connect: MS Iletisim ASC Key
+    environment:
+      groups:
+        - supabase          # VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: msiletisim.com
+      node: 22
+      xcode: latest
+    scripts:
+      - name: Bağımlılıklar
+        script: npm ci
+      - name: Web build (.env oluştur + vite build)
+        script: |
+          printf 'VITE_SUPABASE_URL=%s\nVITE_SUPABASE_ANON_KEY=%s\n' "$VITE_SUPABASE_URL" "$VITE_SUPABASE_ANON_KEY" > .env
+          npm run build
+      - name: Capacitor iOS sync
+        script: npx cap sync ios
+      - name: İmzalama profillerini uygula
+        script: xcode-project use-profiles --project ios/App/App.xcodeproj
+      - name: Build numarasını artır
+        script: |
+          # Her Codemagic build'inde benzersiz CFBundleVersion (5'ten başlar)
+          NEW_BUILD=$((BUILD_NUMBER + 5))
+          sed -i '' "s/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = $NEW_BUILD;/g" ios/App/App.xcodeproj/project.pbxproj
+          echo "CFBundleVersion = $NEW_BUILD"
+      - name: IPA oluştur
+        script: |
+          xcode-project build-ipa \
+            --project ios/App/App.xcodeproj \
+            --scheme App \
+            --config Release
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false

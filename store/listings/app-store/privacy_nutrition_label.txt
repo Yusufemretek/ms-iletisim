@@ -1,0 +1,47 @@
+# Apple App Store — Privacy Nutrition Label Answers
+
+## Data Types Collected
+
+### 1. Contact Info
+- **Name**: Yes — used for order delivery and service records
+- **Email Address**: Yes — used for account login and order notifications
+- **Phone Number**: Yes — used for order delivery and service contact
+- **Physical Address**: Yes — used for courier delivery
+
+### 2. Identifiers
+- **User ID**: Yes — app uses Supabase auth user ID for account management
+- **Device ID**: No
+
+### 3. Usage Data
+- **Product Interaction**: Yes — browsing and purchase history for order management
+- **Other Usage Data**: No
+
+### 4. Diagnostics
+- **Crash Data**: No
+- **Performance Data**: No
+- **Other Diagnostics Data**: No
+
+## Data Types Not Collected
+- Financial Info: No payment card data stored (payments are cash/bank transfer/card on delivery)
+- Location: No
+- Health & Fitness: No
+- Messages: No (chat support uses in-app messaging, not SMS)
+- Photos or Videos: Yes — only when user uploads service request photos
+- Audio Data: No
+- Contacts: No
+- Browsing History: No
+- Search History: No
+- Sensitive Info: No
+
+## Data Usage
+- **Linked to Identity**: Yes — all data is linked to user account
+- **Used for Tracking**: No
+- **Purposes**:
+  - Functionality: Yes (order processing, service requests)
+  - Personalization: No
+  - Analytics: No
+  - Product Personalization: No
+  - App Functionality: Yes
+  - Third-Party Advertising: No
+  - Developer's Advertising: No
+  - Other Purposes: No

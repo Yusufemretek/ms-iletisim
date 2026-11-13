@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MS İletişim</string>
+    <string name="title_activity_main">MS İletişim</string>
+    <string name="package_name">msiletisim.com</string>
+    <string name="custom_url_scheme">msiletisim.com</string>
+</resources>

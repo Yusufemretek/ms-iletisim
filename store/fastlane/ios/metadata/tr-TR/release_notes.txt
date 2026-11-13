@@ -1,0 +1,11 @@
+Sürüm 1.0.0
+
+İlk yayın sürümü.
+
+• Sıfır ve 2. el telefon alımı
+• Telefonunu Sat ve Takas özellikleri
+• Teknik Servis online talebi
+• Operatör Kampanyaları (Vodafone, Turkcell, Türk Telekom)
+• Aksesuar satışı
+• Kredi kartı, havale ve kapıda ödeme
+• Sipariş takibi ve canlı destek

@@ -1,0 +1,40 @@
+# Google Play — Data Safety Form Answers
+
+## Data Collection
+
+### Does your app collect or share any of the required user data types?
+Yes
+
+### Is all of the user data collected by your app encrypted in transit?
+Yes (HTTPS/TLS via Supabase)
+
+### Can users request deletion of their data?
+Yes (KVKK compliance — users can request data deletion via support)
+
+## Data Types Collected
+
+### 1. Personal Info
+- **Name**: Collected — App functionality (order processing)
+- **Email address**: Collected — App functionality (account, notifications)
+- **Phone number**: Collected — App functionality (delivery contact)
+- **Address**: Collected — App functionality (courier delivery)
+- **Other personal info**: No
+
+### 2. Photos and Videos
+- **Photos**: Collected — App functionality (service request photos)
+
+### 3. App Activity
+- **Purchase history**: Collected — App functionality (order tracking)
+
+### 4. App Info and Performance
+- **Crash logs**: Not collected
+- **Diagnostics**: Not collected
+
+## Data Sharing
+- Data is NOT shared with third parties
+
+## Data Processing
+- **Encryption in transit**: Yes
+- **Data deletion request**: Available (via KVKK compliance system)
+- **Independent use**: Data used only for app functionality
+- **No advertising or tracking**: App does not use data for ads or tracking

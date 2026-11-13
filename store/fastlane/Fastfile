@@ -1,0 +1,79 @@
+default_platform(:android)
+
+app_identifier = "com.msiletisim.app"
+apple_id = "destek@msiletisim.com"
+team_id = "REPLACE_WITH_YOUR_TEAM_ID"
+
+platform :android do
+  desc "Build Android App Bundle (.aab) for Google Play"
+  lane :build do
+    Dir.chdir("..") do
+      sh("npm run build")
+      sh("npx cap sync android")
+    end
+    build_android_app(
+      task: "bundle",
+      build_type: "release",
+      project_dir: "android"
+    )
+  end
+
+  desc "Upload to Google Play (Internal Testing)"
+  lane :internal do
+    upload_to_play_store(
+      track: "internal",
+      aab: "android/app/build/outputs/bundle/release/app-release.aab",
+      metadata_path: "store/fastlane/android/metadata",
+      skip_upload_metadata: false,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Upload to Google Play (Production)"
+  lane :production do
+    upload_to_play_store(
+      track: "production",
+      aab: "android/app/build/outputs/bundle/release/app-release.aab",
+      metadata_path: "store/fastlane/android/metadata",
+      skip_upload_metadata: false,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end
+
+platform :ios do
+  desc "Build iOS app"
+  lane :build do
+    Dir.chdir("..") do
+      sh("npm run build")
+      sh("npx cap sync ios")
+    end
+    build_app(
+      project: "ios/App/App.xcodeproj",
+      scheme: "App",
+      export_method: "app-store",
+      output_directory: "build/ios"
+    )
+  end
+
+  desc "Upload to TestFlight"
+  lane :beta do
+    build
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      metadata_path: "store/fastlane/ios/metadata"
+    )
+  end
+
+  desc "Upload to App Store"
+  lane :release do
+    build
+    upload_to_app_store(
+      metadata_path: "store/fastlane/ios/metadata",
+      skip_screenshots: true,
+      skip_metadata: false
+    )
+  end
+end

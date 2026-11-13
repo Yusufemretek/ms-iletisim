@@ -1,0 +1,33 @@
+User-agent: *
+Allow: /
+Allow: /urunler
+Allow: /telefonlar
+Allow: /ikinci-el-telefonlar
+Allow: /aksesuarlar
+Allow: /tabletler
+Allow: /akilli-saatler
+Allow: /teknik-servis
+Allow: /operator-kampanyalari
+Allow: /urun/
+
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders
+Disallow: /order/
+Disallow: /profile
+Disallow: /account/
+Disallow: /favorites
+Disallow: /support
+Disallow: /sell-phone
+Disallow: /trade-in
+Disallow: /services
+Disallow: /products
+Disallow: /used-phones
+Disallow: /operator-campaigns
+Disallow: /product/
+
+Sitemap: https://msiletisim.com/sitemap.xml
