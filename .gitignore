@@ -40,3 +40,4 @@ ios/DerivedData
 *.p12
 *.mobileprovision
 android/app/src/main/assets/public
+android/capacitor-cordova-android-plugins/build
