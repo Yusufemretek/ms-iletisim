@@ -9,8 +9,10 @@ workflows:
       # Codemagic > Team settings > Integrations > App Store Connect'te verdiğiniz isim
       app_store_connect: MS Iletisim ASC Key
     environment:
-      groups:
-        - supabase          # VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+      vars:
+        # Publishable key herkese açık olacak şekilde tasarlanmıştır (web sitesinde de görünür)
+        VITE_SUPABASE_URL: https://fchpkxvbfhaxulyvxqrh.supabase.co
+        VITE_SUPABASE_ANON_KEY: sb_publishable_T1mCq8J6bZncmICujNmXkw_3oHaOeYV
       ios_signing:
         distribution_type: app_store
         bundle_identifier: msiletisim.com
