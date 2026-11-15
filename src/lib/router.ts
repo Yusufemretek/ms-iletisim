@@ -78,3 +78,31 @@ export function matchRoute(
   }
   return params;
 }
+
+const OWN_HOSTS = ['msiletisim.com', 'www.msiletisim.com'];
+
+/**
+ * Admin panelinden girilen linkleri açar. Kendi sitemize ait tam adresleri
+ * (https://msiletisim.com/urunler?firsat=1) uygulama içi yola çevirir; aksi halde
+ * pushState farklı origin'de (Android uygulaması, www alt alan adı) hata verip
+ * butonu çalışmaz hale getiriyordu. Dış linkler yeni sekmede açılır.
+ */
+export function openLink(link: string | null | undefined) {
+  const raw = (link || '').trim();
+  if (!raw) return;
+  if (raw.startsWith('/')) { navigate(raw); return; }
+  try {
+    const url = new URL(raw, window.location.origin);
+    if (url.origin === window.location.origin || OWN_HOSTS.includes(url.hostname)) {
+      navigate(url.pathname + url.search);
+      return;
+    }
+    if (url.protocol === 'http:' || url.protocol === 'https:' || url.protocol === 'tel:' || url.protocol === 'mailto:') {
+      window.open(url.href, '_blank', 'noopener,noreferrer');
+      return;
+    }
+  } catch {
+    // geçersiz URL: göreli yol kabul et
+  }
+  navigate('/' + raw.replace(/^\/+/, ''));
+}

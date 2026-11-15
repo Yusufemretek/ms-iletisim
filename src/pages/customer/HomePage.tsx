@@ -5,7 +5,7 @@ import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { formatPrice } from '@/lib/format';
 import { getActiveCampaigns, type Campaign } from '@/lib/campaigns';
-import { navigate, getNavSeq } from '@/lib/router';
+import { navigate, getNavSeq, openLink } from '@/lib/router';
 import { setSeoMeta, injectLocalBusinessJsonLd } from '@/lib/seo';
 import type { ProductWithImages } from '@/lib/types';
 import { Logo } from '@/components/Logo';
@@ -310,7 +310,7 @@ function BannerCarousel({ banners }: { banners: PromoBanner[] }) {
                   {b.subtitle && <p className="mt-2 text-sm text-white/80 sm:text-base">{b.subtitle}</p>}
                   {b.button_text && (
                     <button
-                      onClick={() => b.link_url && navigate(b.link_url)}
+                      onClick={() => openLink(b.link_url)}
                       className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-white/90 px-5 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition-all hover:bg-white hover:scale-105"
                     >
                       {b.button_text}

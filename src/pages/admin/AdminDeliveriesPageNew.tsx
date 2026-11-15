@@ -12,6 +12,7 @@ function deliveryTitle(d: Delivery & { orders?: Order | null }): string {
   if (d.orders?.order_number) return d.orders.order_number;
   if (d.title) return d.title;
   if (d.source_type === 'TRADE_IN') return 'Takas — Evden Alım';
+  if (d.source_type === 'SELL_PHONE') return 'Telefon Satış — Evden Alım';
   if (d.source_type === 'SERVICE') return 'Teknik Servis — Evden Alım';
   return 'Sipariş';
 }
@@ -194,7 +195,7 @@ export function AdminDeliveriesPageNew() {
                     <div className="flex items-center gap-2">
                       <p className="font-bold text-slate-900">{deliveryTitle(delivery)}</p>
                       {delivery.source_type && delivery.source_type !== 'ORDER' && (
-                        <Badge variant="amber">{delivery.source_type === 'TRADE_IN' ? 'Takas Alımı' : 'Servis Alımı'}</Badge>
+                        <Badge variant="amber">{delivery.source_type === 'TRADE_IN' ? 'Takas Alımı' : delivery.source_type === 'SELL_PHONE' ? 'Satış Alımı' : 'Servis Alımı'}</Badge>
                       )}
                       <Badge variant={statusVariant(delivery.status)}>{DELIVERY_STATUS_LABELS[delivery.status as DeliveryStatus] || delivery.status}</Badge>
                     </div>

@@ -84,13 +84,14 @@ export function AdminSellPhonePage() {
       case 'OFFERED': return 'info';
       case 'ACCEPTED': return 'success';
       case 'REJECTED': return 'error';
+      case 'DECLINED': return 'default';
       case 'COMPLETED': return 'success';
       default: return 'default';
     }
   };
 
   const statusLabels: Record<string, string> = {
-    PENDING: 'Beklemede', OFFERED: 'Teklif Verildi', ACCEPTED: 'Kabul Edildi', REJECTED: 'Reddedildi', COMPLETED: 'Tamamlandı',
+    PENDING: 'Beklemede', OFFERED: 'Teklif Verildi', ACCEPTED: 'Kabul Edildi', REJECTED: 'Reddedildi', DECLINED: 'Müşteri Reddetti', COMPLETED: 'Tamamlandı',
   };
 
   return (
@@ -198,8 +199,25 @@ export function AdminSellPhonePage() {
                 </div>
               </div>
             )}
+            {error && <div className="mb-3 rounded-xl bg-red-50 px-4 py-2.5 text-sm text-red-700">{error}</div>}
             <Input label="Teklif Tutarı (₺)" type="number" min={0} value={offerPrice} onChange={(e) => setOfferPrice(Number(e.target.value))} />
             <Textarea label="Admin Notları" value={adminNotes} onChange={(e) => setAdminNotes(e.target.value)} rows={2} />
+            {selected.status === 'OFFERED' && (
+              <Button variant="success" className="mt-4 w-full" loading={saving} onClick={() => handleOffer('ACCEPTED')}>
+                <CheckCircle className="h-4 w-4" /> Müşteri Kabul Etti{selected.pickup_preference === 'EVDEN_ALIM' ? ' (Kuryeye Gönder)' : ''}
+              </Button>
+            )}
+            {selected.status === 'ACCEPTED' && (
+              <div className="mt-4 space-y-2">
+                {selected.pickup_preference === 'EVDEN_ALIM' && (
+                  <p className="rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-700">Evden alım kaydı Kurye &amp; Teslimat sayfasında. Kurye teslim aldığında talep otomatik tamamlanır.</p>
+                )}
+                <Button variant="success" className="w-full" loading={saving} onClick={() => handleOffer('COMPLETED')}>
+                  <CheckCircle className="h-4 w-4" /> Cihaz Teslim Alındı (Tamamla)
+                </Button>
+              </div>
+            )}
+            {(selected.status === 'PENDING' || selected.status === 'OFFERED') && (
             <div className="mt-4 flex gap-2">
               <Button variant="danger" className="flex-1" loading={saving} onClick={() => handleOffer('REJECTED')}>
                 <X className="h-4 w-4" /> Reddet
@@ -208,6 +226,7 @@ export function AdminSellPhonePage() {
                 <CheckCircle className="h-4 w-4" /> Teklif Gönder
               </Button>
             </div>
+            )}
           </div>
         </div>
       )}

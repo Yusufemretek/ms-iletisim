@@ -283,8 +283,9 @@ export interface DeliverySlot {
 export interface Delivery {
   id: string;
   order_id: string | null;
-  source_type?: 'ORDER' | 'TRADE_IN' | 'SERVICE' | null;
+  source_type?: 'ORDER' | 'TRADE_IN' | 'SELL_PHONE' | 'SERVICE' | null;
   trade_in_id?: string | null;
+  sell_phone_id?: string | null;
   service_id?: string | null;
   customer_name?: string | null;
   title?: string | null;

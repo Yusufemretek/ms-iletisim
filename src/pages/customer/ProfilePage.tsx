@@ -29,6 +29,25 @@ export function ProfilePage() {
   const [newPassword, setNewPassword] = useState('');
   const [passwordMsg, setPasswordMsg] = useState('');
 
+  // Hesap silme (App Store kuralı 5.1.1(v))
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    setDeleteError('');
+    const { error } = await supabase.rpc('delete_my_account');
+    if (error) {
+      setDeleting(false);
+      setDeleteError(trError(error.message));
+      return;
+    }
+    try { await signOut(); } catch { /* oturum zaten geçersiz */ }
+    window.location.replace('/');
+  };
+
   // Address form
   const emptyAddr = { title: '', city: '', district: '', neighborhood: '', street: '', building_no: '', apartment_no: '', directions: '', phone: '', is_default: false };
   const [addrForm, setAddrForm] = useState(emptyAddr);
@@ -234,6 +253,13 @@ export function ProfilePage() {
             <Button variant="danger" onClick={signOut}>
               Çıkış Yap
             </Button>
+            <button
+              type="button"
+              onClick={() => { setDeleteConfirm(''); setDeleteError(''); setShowDeleteModal(true); }}
+              className="mt-4 block text-sm font-medium text-red-600 hover:text-red-700 hover:underline"
+            >
+              Hesabımı Sil
+            </button>
           </div>
         </div>
       </div>
@@ -287,6 +313,34 @@ export function ProfilePage() {
         <div className="mt-4 flex gap-2">
           <Button variant="outline" className="flex-1" onClick={() => setShowAddrModal(false)}>İptal</Button>
           <Button className="flex-1" onClick={handleSaveAddr}>{editingAddr ? 'Güncelle' : 'Kaydet'}</Button>
+        </div>
+      </Modal>
+
+      {/* Delete account modal */}
+      <Modal open={showDeleteModal} onClose={() => !deleting && setShowDeleteModal(false)} title="Hesabımı Sil">
+        <div className="space-y-3 text-sm text-slate-600">
+          <p className="font-medium text-red-600">Bu işlem geri alınamaz.</p>
+          <p>Hesabınız ve şu bilgileriniz kalıcı olarak silinir: profil, adresler, favoriler, yorumlar, destek sohbetleri, bildirimler ve sadakat puanları.</p>
+          <p>Geçmiş sipariş, servis ve satış kayıtları yasal saklama yükümlülüğü nedeniyle hesabınızdan ayrılarak saklanır.</p>
+          <Input
+            label='Onaylamak için "SİL" yazın'
+            value={deleteConfirm}
+            onChange={(e) => setDeleteConfirm(e.target.value)}
+            placeholder="SİL"
+          />
+          {deleteError && <p className="text-sm text-red-600">{deleteError}</p>}
+        </div>
+        <div className="mt-4 flex gap-2">
+          <Button variant="outline" className="flex-1" onClick={() => setShowDeleteModal(false)} disabled={deleting}>Vazgeç</Button>
+          <Button
+            variant="danger"
+            className="flex-1"
+            onClick={handleDeleteAccount}
+            loading={deleting}
+            disabled={deleteConfirm.trim().toLocaleUpperCase('tr-TR') !== 'SİL'}
+          >
+            Hesabı Kalıcı Olarak Sil
+          </Button>
         </div>
       </Modal>
 

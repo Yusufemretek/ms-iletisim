@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { formatPrice, formatDateTime } from '@/lib/format';
 import { navigate } from '@/lib/router';
+import { trError } from '@/lib/errors';
 
 interface SellPhoneRequest {
   id: string;
@@ -23,6 +24,7 @@ interface SellPhoneRequest {
   offer_price: number | null;
   status: string;
   admin_notes: string | null;
+  pickup_preference: string | null;
   created_at: string;
 }
 
@@ -31,6 +33,7 @@ const statusConfig: Record<string, { label: string; variant: 'amber' | 'info' | 
   OFFERED: { label: 'Teklif Verildi', variant: 'info', icon: CheckCircle },
   ACCEPTED: { label: 'Kabul Edildi', variant: 'success', icon: CheckCircle },
   REJECTED: { label: 'Reddedildi', variant: 'error', icon: XCircle },
+  DECLINED: { label: 'Teklifi Reddettiniz', variant: 'default', icon: XCircle },
   COMPLETED: { label: 'Tamamlandı', variant: 'success', icon: CheckCircle },
 };
 
@@ -39,6 +42,8 @@ export function MySellPhoneRequestsPage() {
   const [requests, setRequests] = useState<SellPhoneRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [respondingId, setRespondingId] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!user) {
@@ -57,6 +62,16 @@ export function MySellPhoneRequestsPage() {
       .order('created_at', { ascending: false });
     setRequests((data as SellPhoneRequest[]) || []);
     setLoading(false);
+  };
+
+  const respond = async (id: string, accept: boolean) => {
+    if (!accept && !confirm('Teklifi reddetmek istediğinize emin misiniz?')) return;
+    setError('');
+    setRespondingId(id);
+    const { error: err } = await supabase.rpc('respond_sell_phone_offer', { p_request_id: id, p_accept: accept });
+    setRespondingId(null);
+    if (err) { setError(trError(err)); return; }
+    loadRequests();
   };
 
   if (!user) return null;
@@ -166,9 +181,26 @@ export function MySellPhoneRequestsPage() {
                     )}
 
                     {r.status === 'OFFERED' && (
-                      <div className="mt-3 flex items-center gap-2 rounded-xl bg-blue-50 p-3 text-sm text-blue-700">
+                      <div className="mt-3 rounded-xl bg-blue-50 p-3 text-sm text-blue-700">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 shrink-0" />
+                          <span>Teklifiniz hazır. Kabul ederseniz {r.pickup_preference === 'EVDEN_ALIM' ? 'kuryemiz cihazı adresinizden teslim alacaktır.' : 'cihazınızı mağazamıza getirebilirsiniz.'}</span>
+                        </div>
+                        {error && <p className="mt-2 text-red-600">{error}</p>}
+                        <div className="mt-3 flex gap-2">
+                          <Button size="sm" variant="outline" className="flex-1" loading={respondingId === r.id} onClick={() => respond(r.id, false)}>
+                            <XCircle className="h-4 w-4" /> Reddet
+                          </Button>
+                          <Button size="sm" className="flex-1" loading={respondingId === r.id} onClick={() => respond(r.id, true)}>
+                            <CheckCircle className="h-4 w-4" /> Kabul Et
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                    {r.status === 'ACCEPTED' && (
+                      <div className="mt-3 flex items-center gap-2 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-700">
                         <CheckCircle className="h-4 w-4 shrink-0" />
-                        <span>Teklifiniz hazır. Mağazamızı arayarak teklifi kabul veya reddebilirsiniz.</span>
+                        <span>{r.pickup_preference === 'EVDEN_ALIM' ? 'Teklifi kabul ettiniz. Kuryemiz seçtiğiniz tarihte cihazı adresinizden teslim alacak.' : 'Teklifi kabul ettiniz. Cihazınızı mağazamıza getirebilirsiniz.'}</span>
                       </div>
                     )}
                     {r.status === 'REJECTED' && (
